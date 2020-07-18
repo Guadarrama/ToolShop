@@ -1,0 +1,88 @@
+@{
+    ViewData["Title"] = "My Cart";
+}
+
+<h3 class="text-center"> Items in your cart</h3>
+
+<div class="pt-4 items-container bg-light">
+    @{
+        int total=0;
+        if(ViewBag.ThisUser.CartItems.Count == 0)
+        {
+            <div class="p-4">
+                <p class="text-center">There are currently no items in your cart</p>
+                <p class="text-center"><a href="Dashboard">Go Shopping</a></p>
+            </div>
+        }
+        else
+        {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Quantity In Cart</th>
+                    <th scope="col">Price</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach(var item in ViewBag.ThisUser.CartItems)
+                {
+                    total+=@item.ItemInCart.Price*@item.Amount;
+                    <tr>
+                        <td>
+                            <img src="~/images/product_default.jpg" class="card-img-top" alt="product_default">
+                            <a href="#" class="btn btn-light card-title"><b>@item.ItemInCart.Name</b></a></td>
+                        <td>
+                                <select onChange="window.location.href=this.value" name="amount" id="" class="amount-select form-control form-control-sm ">
+                                    @for(int i=1; @item.ItemInCart.Quantity+1>i ;i++)
+                                    {
+                                        if(@i == @item.Amount)
+                                        {
+                                            <option value="@i" selected>@i</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="editAmountInCart/@item.ItemInCart.ProductId/@i">@i</option>
+                                        }
+                                    }
+                                </select>
+                        </td>
+                        <td class="product-price">@(item.ItemInCart.Price*@item.Amount)</td>
+                        
+                    </tr>                
+                }
+                <td></td>
+                <td></td>
+                <td >Total: <span class="product-price">@total</span></td>
+            </tbody>
+        </table>
+
+        <button class="btn btn-primary text-right">Checkout</button>
+
+        <form action="Checkout" method="post">
+
+        </form>
+
+        }
+    }
+
+</div>
+<style> 
+    .items-container{
+        text-align: center;
+    }
+    .product-price:before{ content:'$'; }
+    .product-price:after{ content: '.00'; }
+    .product-price{
+        display: inline-block;
+        min-width: 11rem;
+    }
+    .card-img-top{
+        width: 50px;
+    }
+    .amount-select{
+        max-width: 4rem;
+    }
+</style>

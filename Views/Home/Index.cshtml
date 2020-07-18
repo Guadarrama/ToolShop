@@ -1,0 +1,102 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="image-text">
+    <img src="~/images/tools.jpg" alt="_ tools" class="text-center" style="width: 100%;">
+    <h3 class="text">LogIn or SignUp to access the inventory</h3>
+</div>
+<div class="pt-4 items-container">
+    @{
+        foreach(var item in ViewBag.AllProducts)
+        {
+            if(item.Seller.UserId != ViewBag.CurrentUserId)
+            {
+                <div class="card text-left" style="width: 17rem;">
+                    <div class="card-top m-2 border border-dark text-center" style="width:16rem">
+                        <a href="#" class="btn btn-light card-title"><b>@item.Name</b></a>
+                        <img src="~/images/product_default.jpg" class="card-img-top text-center" alt="product_default">
+                        <p class="text-left" style="margin-left: 0.7rem;">Seller: @item.Seller.FirstName @item.Seller.LastName</p>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <span style="font-size:0.7rem;">AVAILABLE: @item.Quantity</span>
+                            <span class="product-price">
+                                @item.Price
+                            </span>
+                            @* <form action="/addItemToCart" method="post">
+                                <select name="amount" id="" class="form-control form-control-sm cart-select">
+                                @for(int i=1; @item.Quantity+1>i ;i++)
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                                </select>
+                                <input type="hidden" id="ProductId" name="ProductId" value="@item.ProductId">
+                                <input type="submit" class="btn btn-warning cart-button" style="font-size:0.8rem;" value="Add to &#128722;">
+                            </form> *@
+
+                        </div>
+                        <p class="card-text mt-3 p-1">
+                            @item.Description
+                        </p>
+                        
+                    </div>
+                </div>
+            }
+
+        }
+    }
+</div>
+<style> 
+    .items-container{
+        text-align: center;
+    }
+    .product-price:before{ content:'$'; }
+    .product-price:after{ content: '.00'; }
+    .product-price{
+        display: inline-block;
+        min-width: 10.8rem;
+    }
+
+    .card-text{
+        min-height: 7rem;
+        max-height: 7rem;
+        min-width: 15rem;
+        max-height: 15rem;
+        border-radius: 0.5rem;
+        background-color: #afffff;
+    }
+    .card-title{
+        text-align: left;
+        min-width: 15rem;
+        max-width: 15rem;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .card{
+        display: inline-block;
+        vertical-align: top;
+    }
+    .cart-select{
+        width: 4rem;
+        display: inline-block;
+    }
+    .cart-button{
+        display: inline-block;
+    }
+    .image-text{
+        height: 100px;
+        overflow: hidden;
+        position: relative;
+        text-align: center;
+        color: white;
+    }
+    .text{
+        text-shadow: 2px 2px 8px black;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+</style>

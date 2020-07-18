@@ -1,0 +1,98 @@
+@{
+    ViewData["Title"] = "Profile";
+}
+<div class="profile-header">
+    <h3 class="header-1">Name: @ViewBag.ThisUser.FirstName @ViewBag.ThisUser.LastName</h3>
+    <a class="header-1 btn btn-outline-primary" href="EditProfile" class="btn btn-outline-primary text-right" style="font-size:0.8rem;">EDIT PROFILE</a>
+</div>
+
+<h5>My Products</h5>
+
+<div class="pt-4 items-container bg-light">
+    @{
+        if(ViewBag.ThisUser.Stock.Count == 0)
+        {
+            <div class="p-4">
+                <p>You currently have no items to sell.</p>
+                <p><a href="AddItem">Add Items here</a></p>
+            </div>
+            
+        }
+        foreach(var item in ViewBag.ThisUser.Stock)
+        {
+            <div class="card text-left" style="width: 17rem;">
+                <div class="m-2 text-right">
+                    <a href="EditProduct/@item.ProductId" class="btn btn-outline-info in-bl" style="font-size:0.8rem;">EDIT PRODUCT</a>
+                    <a href="DeleteProduct/@item.ProductId" class="btn btn-danger in-bl" style="font-size:0.8rem;">DELETE</a>
+                </div>
+
+                <div class="card-top m-2 border border-dark text-center" style="width:16rem">
+                    <a href="#" class="btn btn-light card-title"><b>@item.Name</b></a>
+                    <img src="~/images/product_default.jpg" class="card-img-top text-center" alt="product_default">
+                </div>
+                
+                <div class="card-body">
+                    <div>
+                        <p class="product-price">
+                            @item.Price
+                        </p>
+                    </div>
+                    <p class="card-text mt-3 border border-dark">
+                        @item.Description
+                    </p>
+                    
+                </div>
+            </div>
+        }
+    }
+</div>
+<style> 
+    .items-container{
+        text-align: center;
+    }
+    .product-price:before{ content:'$'; }
+    .product-price:after{ content: '.00'; }
+    .product-price{
+        display: inline-block;
+        min-width: 11rem;
+    }
+
+    .card-text{
+        min-height: 7rem;
+        max-height: 7rem;
+        min-width: 15rem;
+        max-height: 15rem;
+    }
+    .card-title{
+        text-align: left;
+        min-width: 15rem;
+        max-width: 15rem;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .card{
+        display: inline-block;
+        vertical-align: top;
+    }
+    .image-text{
+        height: 100px;
+        overflow: hidden;
+        position: relative;
+        text-align: center;
+        color: white;
+    }
+    .text{
+        text-shadow: 2px 2px 8px black;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .in-bl{
+        display: inline-block;
+    }
+    .header-1 {
+        display: inline-block;
+    }
+</style>
