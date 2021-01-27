@@ -3,12 +3,12 @@
 }
 <div class="profile-header">
     <h3 class="header-1">Name: @ViewBag.ThisUser.FirstName @ViewBag.ThisUser.LastName</h3>
-    <a class="header-1 btn btn-outline-primary" href="EditProfile" class="btn btn-outline-primary text-right" style="font-size:0.8rem;">EDIT PROFILE</a>
+    @* <a class="header-1 btn btn-outline-primary" href="EditProfile" class="btn btn-outline-primary text-right" style="font-size:0.8rem;">EDIT PROFILE</a> *@
 </div>
 
 <h5>My Products</h5>
 
-<div class="pt-4 items-container bg-light">
+<div class="pt-4 items-container bg-light p-2">
     @{
         if(ViewBag.ThisUser.Stock.Count == 0)
         {
@@ -46,6 +46,46 @@
         }
     }
 </div>
+<h4 class="text-center">Purchase History</h4>
+<div class="pt-4 items-container bg-light p-2">
+@{
+    if(ViewBag.ThisUser.PurchasedItems.Count == 0)
+    {
+        <div class="p-4">
+            <p>You have no purchase history</p>
+        </div>  
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Order Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                        
+            @foreach(var item in ViewBag.ThisUser.PurchasedItems)
+            {
+                <tr>
+                    <td>
+                        @* <img src="~/images/product_default.jpg" class="card-img-top" alt="product_default"> *@
+                        <a href="#" class="btn btn-light"><b>@item.ItemPurchased.Name</b></a>
+                    </td>
+                    <td>
+                        @item.Quantity X <span class="product-price">@item.ItemPurchased.Price</span>
+                    </td>
+                </tr>
+
+            }
+            </tbody>
+        </table>
+    }
+}
+</div>
+
+
 <style> 
     .items-container{
         text-align: center;
@@ -54,9 +94,14 @@
     .product-price:after{ content: '.00'; }
     .product-price{
         display: inline-block;
-        min-width: 11rem;
+        min-width: 1rem;
     }
-
+    .card-img-top{
+        width: 50px;
+    }
+    .amount-select{
+        max-width: 4rem;
+    }
     .card-text{
         min-height: 7rem;
         max-height: 7rem;
@@ -95,4 +140,9 @@
     .header-1 {
         display: inline-block;
     }
+    table{
+        max-width: 400rem;
+        margin: auto;
+    }
+
 </style>

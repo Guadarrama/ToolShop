@@ -41,6 +41,9 @@ namespace toolShop.Models
         //One to Many: Users +----< CartItems
         public List<UserCart> CartItems { get; set; }
 
+        //One to Many: Users +----< UserPurchases
+        public List<UserPurchase> PurchasedItems {get; set; }
+
         [NotMapped]
         [Compare("Password")]
         [DataType(DataType.Password)]

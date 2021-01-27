@@ -1,0 +1,85 @@
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<h3 class="text-center"> Confirm your Order </h3>
+
+<div class="pt-4 items-container bg-light">
+    @{
+            int total = 0;
+            string cartString = "{";
+            int track = 0;
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Item</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Total per item</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                    @foreach (var item in ViewBag.ThisUser.CartItems)
+                    {
+                        track++;
+                        if(track > 1){cartString += ", ";}
+                        cartString += "\"item" + track + "\": [";
+                        cartString += item.ItemInCart.ProductId.ToString() + ", ";
+                        cartString += item.Amount.ToString();
+                        cartString +="]";
+                        total += @item.ItemInCart.Price * @item.Amount;
+
+                        <tr>
+                            <td>
+                                <img src="~/images/product_default.jpg" class="card-img-top" alt="product_default">
+                                <a href="#" class="btn btn-light card-title"><b>@item.ItemInCart.Name</b></a>
+                            </td>
+                            <td>
+                                <span class="product-price">@item.ItemInCart.Price</span> x &nbsp; @item.Amount
+                            </td>
+                            <td class="product-price">@(item.ItemInCart.Price*@item.Amount)</td>
+                        </tr>
+                    }
+                    
+                            <td></td>
+                            <td></td>
+                            <td ></td>
+                        </tbody>
+                    </table>
+                cartString += "}";
+                <p class="text-center p-4"> Order Total: <b><span class="product-price text-center"> @total</span></b></p>
+
+                @track;
+                <a href="MyCart" class="btn btn-danger">Cancel</a>
+                <form action="cartCheckout" method="post">
+                    <input type="hidden" name="cartCount" value="@track">
+                    <input type="hidden" name="cartTxt" value="@cartString">
+                    <input type="submit" value="Complete Order" class="btn btn-primary text-right">
+                </form>
+    }
+    </div>
+
+
+    <style>
+        a, form{
+            display: inline-block;
+        }
+        .items-container{
+            margin: auto;
+            text-align: center;
+            max-width: 700px;
+        }
+        .product-price:before{ content:'$'; }
+        .product-price:after{ content: '.00'; }
+        .product-price{
+            display: inline-block;
+            min-width: 5rem;
+        }
+        .card-img-top{
+            width: 50px;
+        }
+        .amount-select{
+            max-width: 4rem;
+        }
+    </style>

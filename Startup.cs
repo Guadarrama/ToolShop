@@ -25,11 +25,13 @@ namespace toolShop
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //top three lines used originally to test run on terminal
             services.AddSession();
 
             services.AddDbContext<MyContext>(options => options.UseMySql(Configuration["DBInfo:ConnectionString"]));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +45,8 @@ namespace toolShop
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            //app.UseHttpsRedirection();
 
             app.UseStaticFiles();
             app.UseSession();

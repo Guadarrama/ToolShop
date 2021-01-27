@@ -38,14 +38,28 @@
                         <li class="nav-item">
                                 @if (@ViewBag.CurrentUserId != null)
                                 {   
-                                    if(@ViewBag.PageName == "MyProfile")
+
+
+                                    @if(@ViewBag.PageName == "MyProfile")
                                     {
                                         <a href="AddItem" class="btn btn-link">Add Item</a> <span>|</span>
-                                    }                                    
-                                    <a href="MyProfile" class="btn btn-link">My Profile</a> <span>|</span>
-                                    <a href="MyCart" class="btn btn-link">My Cart</a> <span>|</span>                                  
-                                    <a href="LogOut" class="btn btn-link">Logout</a>
+                                    }
+                                    @if(@ViewBag.PageName == "EditProduct")
+                                    {
+                                        <a href="../MyProfile" class="btn btn-link">My Profile</a> <span>|</span>
+                                        <a href="../MyCart" class="btn btn-link">My Cart</a> <span>|</span>                                  
+                                        <a href="../LogOut" class="btn btn-link">Logout</a>
+                                    }     
+                                    else
+                                    {
+                                        <a href="MyProfile" class="btn btn-link">My Profile</a> <span>|</span>
+                                        <a href="MyCart" class="btn btn-link">My Cart</a> <span>|</span>                                  
+                                        <a href="LogOut" class="btn btn-link">Logout</a>
+
+                                    }                                                    
+
                                 }
+                                
                                 else
                                 {
                                     <a href="/LogReg" class="btn btn-outline-danger">Login/Register</a>

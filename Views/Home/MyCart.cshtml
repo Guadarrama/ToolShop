@@ -1,3 +1,4 @@
+
 @{
     ViewData["Title"] = "My Cart";
 }
@@ -15,60 +16,75 @@
             </div>
         }
         else
-        {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Item</th>
-                    <th scope="col">Quantity In Cart</th>
-                    <th scope="col">Price</th>
-                    
-                </tr>
-            </thead>
-            <tbody>
+        {           
+            <table class="table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th scope="col">Item</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity In Cart</th>
+                                <th scope="col">Price</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            @foreach(var item in ViewBag.ThisUser.CartItems)
+                            {
 
-                @foreach(var item in ViewBag.ThisUser.CartItems)
-                {
-                    total+=@item.ItemInCart.Price*@item.Amount;
-                    <tr>
-                        <td>
-                            <img src="~/images/product_default.jpg" class="card-img-top" alt="product_default">
-                            <a href="#" class="btn btn-light card-title"><b>@item.ItemInCart.Name</b></a></td>
-                        <td>
-                                <select onChange="window.location.href=this.value" name="amount" id="" class="amount-select form-control form-control-sm ">
-                                    @for(int i=1; @item.ItemInCart.Quantity+1>i ;i++)
-                                    {
-                                        if(@i == @item.Amount)
-                                        {
-                                            <option value="@i" selected>@i</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="editAmountInCart/@item.ItemInCart.ProductId/@i">@i</option>
-                                        }
-                                    }
-                                </select>
-                        </td>
-                        <td class="product-price">@(item.ItemInCart.Price*@item.Amount)</td>
-                        
-                    </tr>                
-                }
-                <td></td>
-                <td></td>
-                <td >Total: <span class="product-price">@total</span></td>
-            </tbody>
-        </table>
+                                total+=@item.ItemInCart.Price*@item.Amount;
+                                int available = item.ItemInCart.Quantity - item.ItemInCart.AmountSold;
 
-        <button class="btn btn-primary text-right">Checkout</button>
+                                <tr>
+                                    <td><a href="removeFromCart/@item.ItemInCart.ProductId" class="btn btn-danger">Remove</a></td>
+                                    <td>
+                                        <img src="~/images/product_default.jpg" class="card-img-top" alt="product_default">
+                                        <a href="#" class="btn btn-light card-title"><b>@item.ItemInCart.Name</b></a></td>
+                                    <td>
+                                        <span class="product-price">@item.ItemInCart.Price</span>
+                                        
+                                    </td>
+                                    <td>
+                                            <select onChange="window.location.href=this.value" name="amount" id="amount" class="amount-select form-control form-control-sm ">
+                                                @for(int i=1; @available+1>i ;i++)
+                                                {
+                                                    if(@i == @item.Amount)
+                                                    {
+                                                        <option value="@i" selected>@i</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="editAmountInCart/@item.ItemInCart.ProductId/@i">@i</option>
+                                                    }
+                                                }
+                                            </select>
+                                    </td>
+                                    <td class="product-price">@(item.ItemInCart.Price*@item.Amount)</td>
+                                    
+                                </tr>
 
-        <form action="Checkout" method="post">
 
-        </form>
+                            }
+                            <td></td>
+                            <td></td>
+                            <td ></td>
+                        </tbody>
+                    </table>
+
+                    <p class="text-right">Total: <span class="product-price text-center">@total</span></p>
 
         }
     }
+        @if(ViewBag.ThisUser.CartItems.Count != 0)
+        {
+            <a href="checkoutForm" class="btn btn-primary text-right">Checkout</a>
+        }
+        
 
 </div>
+
+
 <style> 
     .items-container{
         text-align: center;

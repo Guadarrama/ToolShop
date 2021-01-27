@@ -8,7 +8,7 @@ using toolShop.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
-
+using Newtonsoft.Json.Linq;
 
 namespace toolShop.Controllers
 {
@@ -30,9 +30,17 @@ namespace toolShop.Controllers
             {
                 return Redirect("Dashboard");
             }
-            ViewBag.AllProducts = dbContext.Products
+            //try catch
+            try
+            {
+                 ViewBag.AllProducts = dbContext.Products
                 .Include(seller => seller.Seller)
-                .ToList();
+                .ToList(); 
+            }
+            catch
+            {
+                Console.WriteLine("AllProducts exception!");
+            }
 
             return View();
         }
@@ -131,6 +139,8 @@ namespace toolShop.Controllers
             ViewBag.CurrentUserId = (int)Sess;
             ViewBag.ThisUser = dbContext.Users
                 .Include(s => s.Stock)
+                .Include(pi => pi.PurchasedItems)
+                .ThenInclude(ipurchased => ipurchased.ItemPurchased)
                 .FirstOrDefault(u => u.UserId == (int)Sess);
             return View();
         }
@@ -195,8 +205,8 @@ namespace toolShop.Controllers
                 return Redirect("/");
             }
             ViewBag.CurrentUserId = (int)Sess;
-
-                ViewBag.ProductToDisplay = dbContext.Products
+            ViewBag.PageName = "EditProduct";
+            ViewBag.ProductToDisplay = dbContext.Products
                     .Where(e => e.UserId == (int)Sess)
                     .FirstOrDefault(p => p.ProductId == ProductId);
 
@@ -233,7 +243,6 @@ namespace toolShop.Controllers
                 return RedirectToAction("MyProfile");
 
             }
-
             ViewBag.CurrentUserId = (int)Sess;
             ViewBag.ProductToDisplay = dbContext.Products
                 .Where(e => e.UserId == (int)Sess)
@@ -301,6 +310,140 @@ namespace toolShop.Controllers
 
             return RedirectToAction("MyCart");
         }
+
+        [HttpGet("removeFromCart/{ProductId}")]
+        public IActionResult removeFromCart(int ProductId)
+        {
+            int? Sess = HttpContext.Session.GetInt32("LoggedIn");
+            if(Sess == null)
+            {
+                HttpContext.Session.Clear();
+                return Redirect("/");
+            }
+            //Get UserCarts where UserId == (int)Sess && ProductId == ProductId
+            //Delete UserCart then savechanges
+            
+            UserCart UserCartToRemove = dbContext.UserCarts
+                .Where(thisUser => thisUser.UserId == (int)Sess)
+                .FirstOrDefault(productInCart => productInCart.ProductId == ProductId);
+
+            dbContext.UserCarts.Remove(UserCartToRemove);
+            dbContext.SaveChanges();
+
+            return RedirectToAction("MyCart");
+        }
+        
+        [HttpGet("checkoutForm")]
+        public IActionResult CheckoutForm()
+        {
+            //test if user is in session:
+            int? Sess = HttpContext.Session.GetInt32("LoggedIn");
+            if (Sess == null)
+            {
+                HttpContext.Session.Clear();
+                return Redirect("/");
+            }
+            ViewBag.CurrentUserId = (int)Sess;
+            ViewBag.ThisUser = dbContext.Users
+                .Include(c => c.CartItems)
+                .ThenInclude(p => p.ItemInCart)
+                .FirstOrDefault(u => u.UserId == (int)Sess);
+            return View();
+        }
+
+        [HttpPost("cartCheckout")]
+        public IActionResult cartCheckout()
+        {
+            //item(#)[0] = itemId, item(#)[1] = amount
+            int? Sess = HttpContext.Session.GetInt32("LoggedIn");
+            if (Sess == null)
+            {
+                HttpContext.Session.Clear();
+                return Redirect("/");
+            }
+            //after user confirmation, run code
+            Console.WriteLine("*******************************************************");
+            string orderCheckoutString = Request.Form["cartTxt"]; //jsonString from form
+            int itemCount = Convert.ToInt32(Request.Form["cartCount"]); //item quant from form
+            Console.WriteLine("*        Amount of products to checkout: {0}          *", itemCount);
+            Console.WriteLine("*******************************************************");
+
+            JObject checkoutItems = JObject.Parse(orderCheckoutString);
+
+            for (int i = 1; i <= itemCount; i++)
+            {
+                string tokenToReference = "item" + Convert.ToString(i);
+                JToken itemData = checkoutItems.SelectToken(tokenToReference);
+                var itemDataArray = itemData?.ToObject<int[]>(); // JToken to array
+                Console.WriteLine("++++++++++++++++++++++++");
+                Console.WriteLine("Reference Text: {0}", tokenToReference);
+                Console.WriteLine("++++++++++++++++++++++++");
+                // Console.WriteLine("itemId: {0}, amount: {1}", itemDataArray[0], itemDataArray[1]); -- delete comment
+                //1. check if there's enough items to sell, check product
+                //if(Quantity-AmountSold > 0)
+                //add data to new item
+                //check if UserPurchases exists, if not create ne UserPurchases:
+                //if item exists
+                int thisUserId = (int)Sess;
+                if(
+                    dbContext.UserPurchases
+                        .Where(up => up.UserId==(int)Sess && up.ProductId== itemDataArray[0])
+                        .SingleOrDefault() !=null
+                )
+                {
+                    //check if item exists
+                    Console.WriteLine("Purchasing {0} of (itemId): {1}, EXISTING", itemDataArray[1], itemDataArray[0]);
+                    UserPurchase thisUserPurchase = dbContext.UserPurchases
+                        .Where(up => up.UserId == thisUserId && up.ProductId == itemDataArray[0])
+                        .SingleOrDefault();
+                    //amount to add
+                    thisUserPurchase.Quantity += itemDataArray[1];
+                    //get Product data
+                    Product productCheck = dbContext.Products
+                        .Where(p => p.ProductId == thisUserPurchase.ProductId)
+                        .SingleOrDefault();
+                    productCheck.AmountSold += itemDataArray[1];
+                    //add here: error catch!
+                    dbContext.Products.Update(productCheck);
+                    dbContext.UserPurchases.Update(thisUserPurchase);
+                }
+                else //if item doesnt exist
+                {
+                    UserPurchase newPurchase = new UserPurchase();
+                    newPurchase.UserId = thisUserId;
+                    newPurchase.ProductId = itemDataArray[0];
+                    newPurchase.Quantity = itemDataArray[1];
+                    //modify amount sold on Product table in database
+                    Product thisProduct = dbContext.Products
+                        .Where(p => p.ProductId == itemDataArray[0])
+                        .SingleOrDefault();
+                    //have to test if there are enough items to sell/modify "AmountSold"
+                    thisProduct.AmountSold += itemDataArray[1];
+
+                    //console print test:
+                    Console.WriteLine("-----------------------------------");
+                    Console.WriteLine("-------Confirm data to add: -------");
+                    Console.WriteLine("newPurchase: UserId: {0}, ProductID: {1}, Quantity: {2} | Product: Amount Sold: {3}", 
+                        newPurchase.UserId, newPurchase.ProductId, newPurchase.Quantity, thisProduct.AmountSold
+                    );
+                    Console.WriteLine("-----------------------------------");
+                    //add here: error catch!
+                    /**/
+                    dbContext.Products.Update(thisProduct);
+                    dbContext.Add(newPurchase);
+                    /**/
+                }
+
+                UserCart UserCartToRemove = dbContext.UserCarts
+                    .Where(thisUser => thisUser.UserId == (int)Sess)
+                    .FirstOrDefault(productInCart => productInCart.ProductId == itemDataArray[0]);
+
+                dbContext.UserCarts.Remove(UserCartToRemove);
+                dbContext.SaveChanges();
+            }
+
+
+            return Redirect("MyProfile");
+        }
     }
 }
-

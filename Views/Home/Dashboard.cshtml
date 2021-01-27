@@ -11,6 +11,7 @@
     @{
         foreach(var item in ViewBag.AllProducts)
         {
+            int available = item.Quantity-item.AmountSold;
             if(item.Seller.UserId != ViewBag.CurrentUserId)
             {
                 <div class="card text-left" style="width: 17rem;">
@@ -21,13 +22,14 @@
                     </div>
                     <div class="card-body">
                         <div>
-                            <span style="font-size:0.7rem;">AVAILABLE: @item.Quantity</span>
+                            
+                            <span style="font-size:0.7rem;">AVAILABLE: @available</span>
                             <span class="product-price">
                                 @item.Price
                             </span>
                             <form action="/addItemToCart" method="post">
                                 <select name="amount" id="" class="form-control form-control-sm cart-select">
-                                @for(int i=1; @item.Quantity+1>i ;i++)
+                                @for(int i=1; @available+1 > i ;i++)
                                 {
                                     <option value="@i">@i</option>
                                 }

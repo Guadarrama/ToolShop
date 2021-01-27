@@ -14,13 +14,15 @@ namespace toolShop.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("toolShop.Models.Product", b =>
                 {
                     b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<int>("AmountSold");
 
                     b.Property<DateTime>("CreatedAt");
 
@@ -91,6 +93,30 @@ namespace toolShop.Migrations
                     b.ToTable("UserCarts");
                 });
 
+            modelBuilder.Entity("toolShop.Models.UserPurchase", b =>
+                {
+                    b.Property<int>("UserPurchaseId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<int>("ProductId");
+
+                    b.Property<int>("Quantity");
+
+                    b.Property<DateTime>("UpdatedAt");
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("UserPurchaseId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserPurchases");
+                });
+
             modelBuilder.Entity("toolShop.Models.Product", b =>
                 {
                     b.HasOne("toolShop.Models.User", "Seller")
@@ -108,6 +134,19 @@ namespace toolShop.Migrations
 
                     b.HasOne("toolShop.Models.User", "Buyer")
                         .WithMany("CartItems")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("toolShop.Models.UserPurchase", b =>
+                {
+                    b.HasOne("toolShop.Models.Product", "ItemPurchased")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("toolShop.Models.User", "UserPurchased")
+                        .WithMany("PurchasedItems")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

@@ -4,9 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Server.Kestrel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+
+
 
 namespace toolShop
 {
@@ -14,7 +17,9 @@ namespace toolShop
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            //top line normally runs website
+            //CreateWebHostBuilder(args).Build().Run();
+            CreateWebHostBuilder(args).UseKestrel().UseIIS().UseUrls(new string[] { "http://localhost:5000" }).Build().Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
