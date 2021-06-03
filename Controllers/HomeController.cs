@@ -33,9 +33,9 @@ namespace toolShop.Controllers
             //try catch
             try
             {
-                 ViewBag.AllProducts = dbContext.Products
-                .Include(seller => seller.Seller)
-                .ToList(); 
+                ViewBag.AllProducts = dbContext.Products
+                    .Include(seller => seller.Seller)
+                    .ToList();
             }
             catch
             {
@@ -53,6 +53,7 @@ namespace toolShop.Controllers
         [HttpPost("regCheck")]
         public IActionResult regCheck(User newUser)
         {
+            HttpContext.Session.Clear();
             if(ModelState.IsValid)
             {
                 if(dbContext.Users.Any(u => u.Email == newUser.Email))
@@ -73,6 +74,7 @@ namespace toolShop.Controllers
         [HttpPost("logCheck")]
         public IActionResult logCheck(LUser CheckUser)
         {
+            HttpContext.Session.Clear();
             if(ModelState.IsValid)
             {
                 var userInDb = dbContext.Users.FirstOrDefault(u => u.Email == CheckUser.LEmail);
@@ -104,6 +106,14 @@ namespace toolShop.Controllers
             HttpContext.Session.Clear();
             return Redirect("/");
         }
+        //using guest account
+        // [HttpGet("useGuest")]
+        // public IActionResult useGuest()
+        // {
+        //     HttpContext.Session.SetString("LoggedIn", "guest");
+        //     return Redirect("Dashboard");
+        // }
+
 
         [HttpGet("Dashboard")]
         public IActionResult Dashboard()
@@ -116,11 +126,15 @@ namespace toolShop.Controllers
                 return Redirect("/");
             }
             ViewBag.CurrentUserId = (int)Sess;
-            ViewBag.ThisUser = dbContext.Users
-                .FirstOrDefault(u => u.UserId == (int)Sess);
             ViewBag.AllProducts = dbContext.Products
                 .Include(seller => seller.Seller)
                 .ToList();
+            ViewBag.ThisUser = dbContext.Users
+                .Include(s => s.Stock)
+                .Include(pi => pi.CartItems)
+                //.ThenInclude(ipurchased => ipurchased.ItemPurchased)
+                .FirstOrDefault(u => u.UserId == (int)Sess);
+            
 
             return View();
         }
@@ -139,10 +153,32 @@ namespace toolShop.Controllers
             ViewBag.CurrentUserId = (int)Sess;
             ViewBag.ThisUser = dbContext.Users
                 .Include(s => s.Stock)
+                .Include(c => c.CartItems)
                 .Include(pi => pi.PurchasedItems)
                 .ThenInclude(ipurchased => ipurchased.ItemPurchased)
                 .FirstOrDefault(u => u.UserId == (int)Sess);
             return View();
+        }
+
+        [HttpGet("DeleteProduct/{ProductId}")]
+        public IActionResult DeleteProduct(int ProductId)
+        {
+            int? Sess = HttpContext.Session.GetInt32("LoggedIn");
+            if (Sess == null)
+            {
+                HttpContext.Session.Clear();
+                return Redirect("/");
+            }
+
+            Product ProductToDelete = dbContext.Products
+                .Where(uid => uid.UserId == (int)Sess)
+                .FirstOrDefault(pid => pid.ProductId == ProductId);
+
+            ProductToDelete.isAvailable = false;
+            dbContext.Products.Update(ProductToDelete);
+            dbContext.SaveChanges();
+
+            return RedirectToAction("MyProfile");
         }
 
         [HttpGet("MyCart")]
@@ -160,6 +196,7 @@ namespace toolShop.Controllers
                 .Include(c => c.CartItems)
                 .ThenInclude(p => p.ItemInCart)
                 .FirstOrDefault(u => u.UserId == (int)Sess);
+    
             return View();
         }
 
@@ -176,6 +213,10 @@ namespace toolShop.Controllers
             
             ViewBag.CurrentUserId = (int)Sess;
             ViewBag.ThisUser = dbContext.Users
+                .Include(s => s.Stock)
+                .Include(c => c.CartItems)
+                .Include(pi => pi.PurchasedItems)
+                .ThenInclude(ipurchased => ipurchased.ItemPurchased)
                 .FirstOrDefault(u => u.UserId == (int)Sess);
             return View();
         }
@@ -209,6 +250,9 @@ namespace toolShop.Controllers
             ViewBag.ProductToDisplay = dbContext.Products
                     .Where(e => e.UserId == (int)Sess)
                     .FirstOrDefault(p => p.ProductId == ProductId);
+            ViewBag.ThisUser = dbContext.Users
+                .Include(pi => pi.CartItems)
+                .FirstOrDefault(u => u.UserId == (int)Sess);
 
             return View();
         }
@@ -235,6 +279,7 @@ namespace toolShop.Controllers
                 productFromDb.Description = productEdit.Description;
                 productFromDb.Price = productEdit.Price;
                 productFromDb.Quantity = productEdit.Quantity;
+                productFromDb.isAvailable = true;
 
                 //Update and save changes to database
                 dbContext.Products.Update(productFromDb);

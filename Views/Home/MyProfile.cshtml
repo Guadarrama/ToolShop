@@ -23,7 +23,14 @@
             <div class="card text-left" style="width: 17rem;">
                 <div class="m-2 text-right">
                     <a href="EditProduct/@item.ProductId" class="btn btn-outline-info in-bl" style="font-size:0.8rem;">EDIT PRODUCT</a>
-                    <a href="DeleteProduct/@item.ProductId" class="btn btn-danger in-bl" style="font-size:0.8rem;">DELETE</a>
+                    @if(@item.isAvailable == true)
+                    {
+                        <a href="DeleteProduct/@item.ProductId" class="btn btn-danger in-bl" style="font-size:0.8rem;">DELETE</a>
+                    }
+                    else
+                    {
+                        <p class="text-danger in-bl" style="font-size:0.8rem;">Product Deleted</p>
+                    }
                 </div>
 
                 <div class="card-top m-2 border border-dark text-center" style="width:16rem">
@@ -46,7 +53,6 @@
         }
     }
 </div>
-<h4 class="text-center">Purchase History</h4>
 <div class="pt-4 items-container bg-light p-2">
 @{
     if(ViewBag.ThisUser.PurchasedItems.Count == 0)
@@ -57,6 +63,7 @@
     }
     else
     {
+        <h4 class="text-center">Purchase History</h4>
         <table class="table">
             <thead>
                 <tr>
@@ -70,7 +77,7 @@
             {
                 <tr>
                     <td>
-                        @* <img src="~/images/product_default.jpg" class="card-img-top" alt="product_default"> *@
+                        <img src="~/images/product_default.jpg" class="card-img-bottom" alt="product_default">
                         <a href="#" class="btn btn-light"><b>@item.ItemPurchased.Name</b></a>
                     </td>
                     <td>
@@ -89,6 +96,8 @@
 <style> 
     .items-container{
         text-align: center;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        padding-bottom: 20px;
     }
     .product-price:before{ content:'$'; }
     .product-price:after{ content: '.00'; }
@@ -97,6 +106,9 @@
         min-width: 1rem;
     }
     .card-img-top{
+        width: 180px;
+    }
+    .card-img-bottom{
         width: 50px;
     }
     .amount-select{
@@ -119,6 +131,8 @@
     .card{
         display: inline-block;
         vertical-align: top;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     }
     .image-text{
         height: 100px;
@@ -143,6 +157,21 @@
     table{
         max-width: 400rem;
         margin: auto;
+    }
+    h3{
+        color: black;
+        -webkit-text-stroke: .5px white;
+        background-color: white;
+        border-radius: 20px;
+        opacity: .8;
+        padding: 2px;
+        box-shadow: 5px 0 20px white;
+    }
+    h4, h5{
+        text-shadow: 5px 0 20px white;
+        color: black;
+        -webkit-text-stroke: .5px white;
+        
     }
 
 </style>

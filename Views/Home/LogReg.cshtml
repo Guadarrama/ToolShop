@@ -2,18 +2,36 @@
     ViewData["Title"] = "Login or Register";
 }
 <p>...</p>
-<h3 class="text-center">Login or Register</h3>
+<h3 class="text-center title-text">Login or Register</h3>
 <hr>
 
 <div>
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-6 input-container">
             <h3>Register</h3>
             <partial name="_Register"/>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-6 input-container">
             <h3>Login</h3>
             <partial name="_Login"/>
         </div>        
     </div>
 </div>
+<style>
+
+.row{
+    background-color: white;
+    border-radius: 10px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    opacity: .97;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    padding-bottom: 20px;
+}
+.title-text{
+    text-shadow: 2px 0 5px black;
+    color: white;
+    font-size: 40px;
+    -webkit-text-stroke: 2px black;
+}
+</style>

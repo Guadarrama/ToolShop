@@ -47,14 +47,14 @@
                                     @if(@ViewBag.PageName == "EditProduct")
                                     {
                                         <a href="../MyProfile" class="btn btn-link">My Profile</a> <span>|</span>
-                                        <a href="../MyCart" class="btn btn-link">My Cart</a> <span>|</span>                                  
-                                        <a href="../LogOut" class="btn btn-link">Logout</a>
+                                                <a href="../MyCart" class="btn btn-link">My Cart(@ViewBag.ThisUser.CartItems.Count)</a>                                
+                                        <a href="../LogOut" class="btn btn-danger">Logout</a>
                                     }     
                                     else
                                     {
                                         <a href="MyProfile" class="btn btn-link">My Profile</a> <span>|</span>
-                                        <a href="MyCart" class="btn btn-link">My Cart</a> <span>|</span>                                  
-                                        <a href="LogOut" class="btn btn-link">Logout</a>
+                                        <a href="MyCart" class="btn btn-link">My Cart (@ViewBag.ThisUser.CartItems.Count) </a>                              
+                                        <a href="LogOut" class="btn btn-danger">Logout</a>
 
                                     }                                                    
 
@@ -62,7 +62,7 @@
                                 
                                 else
                                 {
-                                    <a href="/LogReg" class="btn btn-outline-danger">Login/Register</a>
+                                    <a href="/LogReg" class="btn btn-danger">Login or Register</a>
                                 }
         
                             
@@ -78,6 +78,9 @@
             @RenderBody()
         </main>
     </div>
+
+
+    
 
     <footer class="border-top footer text-muted">
         <div class="container">
@@ -106,5 +109,20 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @RenderSection("Scripts", required: false)
+    
 </body>
 </html>
+<style>
+body {
+    background-color: #ffffff;
+    background-image:  repeating-radial-gradient( circle at 0 0, transparent 0, #ffffff 10px ), repeating-linear-gradient( #e7e9ff55, #e7e9ff );
+
+}
+footer{
+    background-color: whitesmoke;
+    opacity: .9;
+}
+nav{
+    opacity: .85;
+}
+</style>

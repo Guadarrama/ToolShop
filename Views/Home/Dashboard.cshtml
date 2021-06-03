@@ -22,22 +22,45 @@
                     </div>
                     <div class="card-body">
                         <div>
-                            
-                            <span style="font-size:0.7rem;">AVAILABLE: @available</span>
-                            <span class="product-price">
-                                @item.Price
-                            </span>
-                            <form action="/addItemToCart" method="post">
-                                <select name="amount" id="" class="form-control form-control-sm cart-select">
-                                @for(int i=1; @available+1 > i ;i++)
+                            @if(@available != 0)
+                            {
+                                if(@item.isAvailable != true)
                                 {
-                                    <option value="@i">@i</option>
+                                    <span style="font-size:0.7rem;">CURRENTLY UNAVAILABLE</span>
+                                    <span class="product-price">
+                                        @item.Price
+                                    </span>
+                                    <select name="amount" id="" class="form-control form-control-sm cart-select" disabled></select>
+                                    <button type="button" class="btn btn-light cart-button" style="font-size:0.8rem;"><strike>Add to &#128722;</strike></button>
                                 }
-                                </select>
-                                <input type="hidden" id="ProductId" name="ProductId" value="@item.ProductId">
-                                <input type="submit" class="btn btn-warning cart-button" style="font-size:0.8rem;" value="Add to &#128722;">
-                            </form>
+                                else
+                                {
+                                    <span style="font-size:0.7rem;">AVAILABLE: @available</span>
+                                    <span class="product-price">
+                                        @item.Price
+                                    </span>
+                                    <form action="/addItemToCart" method="post">
+                                        <select name="amount" id="" class="form-control form-control-sm cart-select">
+                                        @for(int i=1; @available+1 > i ;i++)
+                                        {
+                                            <option value="@i">@i</option>
+                                        }
+                                        </select>
+                                        <input type="hidden" id="ProductId" name="ProductId" value="@item.ProductId">
+                                        <input type="submit" class="btn btn-warning cart-button" style="font-size:0.8rem;" value="Add to &#128722;">
+                                    </form>                                    
+                                }
 
+                            }
+                            else
+                            {
+                                <span style="font-size:0.7rem;">OUT OF STOCK</span>
+                                <span class="product-price">
+                                    @item.Price
+                                </span>
+                                <select name="amount" id="" class="form-control form-control-sm cart-select" disabled></select>
+                                <button type="button" class="btn btn-light cart-button" style="font-size:0.8rem;"><strike>Add to &#128722;</strike></button>
+                            }
                         </div>
                         <p class="card-text mt-3 p-1">
                             @item.Description
@@ -56,6 +79,7 @@
 <style> 
     .items-container{
         text-align: center;
+
     }
     .product-price:before{ content:'$'; }
     .product-price:after{ content: '.00'; }
@@ -83,6 +107,8 @@
     .card{
         display: inline-block;
         vertical-align: top;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     }
     .cart-select{
         width: 4rem;

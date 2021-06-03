@@ -40,6 +40,8 @@ namespace toolShop.Migrations
 
                     b.Property<int>("UserId");
 
+                    b.Property<bool>("isAvailable");
+
                     b.HasKey("ProductId");
 
                     b.HasIndex("UserId");

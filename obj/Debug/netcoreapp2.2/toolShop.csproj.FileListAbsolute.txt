@@ -40,3 +40,8 @@ C:\Users\Barron\Documents\CodingDojo\cSharp\Projects\toolShop\obj\Debug\netcorea
 C:\Users\Barron\Documents\CodingDojo\cSharp\Projects\toolShop\obj\Debug\netcoreapp2.2\Razor\Views\_ViewStart.cshtml.g.cs
 C:\Users\Barron\Documents\CodingDojo\cSharp\Projects\toolShop\obj\Debug\netcoreapp2.2\toolShop.genruntimeconfig.cache
 C:\Users\Barron\Documents\CodingDojo\cSharp\Projects\toolShop\obj\Debug\netcoreapp2.2\Razor\Views\Home\CheckoutForm.cshtml.g.cs
+C:\Users\Barron\Documents\CodingDojo\cSharp\Projects\toolShop\bin\Debug\netcoreapp2.2\publish\appsettings.Development.json
+C:\Users\Barron\Documents\CodingDojo\cSharp\Projects\toolShop\bin\Debug\netcoreapp2.2\publish\web.config
+C:\Users\Barron\Documents\CodingDojo\cSharp\Projects\toolShop\bin\Debug\netcoreapp2.2\publish\appsettings.json
+C:\Users\Barron\Documents\CodingDojo\cSharp\Projects\toolShop\bin\Debug\netcoreapp2.2\publish\toolShop.deps.json
+C:\Users\Barron\Documents\CodingDojo\cSharp\Projects\toolShop\bin\Debug\netcoreapp2.2\publish\toolShop.runtimeconfig.json

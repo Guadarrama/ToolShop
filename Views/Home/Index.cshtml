@@ -4,49 +4,77 @@
 
 <div class="image-text">
     <img src="~/images/tools.jpg" alt="_ tools" class="text-center" style="width: 100%;">
-    <h3 class="text">LogIn or SignUp to access the inventory</h3>
+    <h3 class="text">
+        Log-In or Sign-Up to access the inventory or 
+        <a href="UseGuest" class="btn btn-warning cart-button" style="font-size:0.8rem; color:black;"> Continue as a Guest </a>
+    </h3>
 </div>
 <div class="pt-4 items-container">
     @{
         if(@ViewBag.AllProducts != null)
         {
-            foreach(var item in ViewBag.AllProducts)
+        foreach(var item in ViewBag.AllProducts)
+        {
+            int available = item.Quantity-item.AmountSold;
+            if(item.Seller.UserId != ViewBag.CurrentUserId)
             {
-                if(item.Seller.UserId != ViewBag.CurrentUserId)
-                {
-                    <div class="card text-left" style="width: 17rem;">
-                        <div class="card-top m-2 border border-dark text-center" style="width:16rem">
-                            <a href="#" class="btn btn-light card-title"><b>@item.Name</b></a>
-                            <img src="~/images/product_default.jpg" class="card-img-top text-center" alt="product_default">
-                            <p class="text-left" style="margin-left: 0.7rem;">Seller: @item.Seller.FirstName @item.Seller.LastName</p>
-                        </div>
-                        <div class="card-body">
-                            <div>
-                                <span style="font-size:0.7rem;">AVAILABLE: @item.Quantity</span>
+                <div class="card text-left" style="width: 17rem;">
+                    <div class="card-top m-2 border border-dark text-center" style="width:16rem">
+                        <a href="#" class="btn btn-light card-title"><b>@item.Name</b></a>
+                        <img src="~/images/product_default.jpg" class="card-img-top text-center" alt="product_default">
+                        <p class="text-left" style="margin-left: 0.7rem;">Seller: @item.Seller.FirstName @item.Seller.LastName</p>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            @if(@available != 0)
+                            {
+                                if(@item.isAvailable != true)
+                                {
+                                    <span style="font-size:0.7rem;">CURRENTLY UNAVAILABLE</span>
+                                    <span class="product-price">
+                                        @item.Price
+                                    </span>
+                                    <select name="amount" id="" class="form-control form-control-sm cart-select" disabled></select>
+                                    <button type="button" class="btn btn-light cart-button" style="font-size:0.8rem;"><strike>Add to &#128722;</strike></button>
+                                }
+                                else
+                                {
+                                    <span style="font-size:0.7rem;">AVAILABLE: @available</span>
+                                    <span class="product-price">
+                                        @item.Price
+                                    </span>
+                                    <form action="/addItemToCart" method="post">
+                                        <select name="amount" id="" class="form-control form-control-sm cart-select">
+                                        @for(int i=1; @available+1 > i ;i++)
+                                        {
+                                            <option value="@i">@i</option>
+                                        }
+                                        </select>
+                                        <input type="hidden" id="ProductId" name="ProductId" value="@item.ProductId">
+                                        <input type="submit" class="btn btn-warning cart-button" style="font-size:0.8rem;" value="Add to &#128722;">
+                                    </form>                                    
+                                }
+
+                            }
+                            else
+                            {
+                                <span style="font-size:0.7rem;">OUT OF STOCK</span>
                                 <span class="product-price">
                                     @item.Price
                                 </span>
-                                @* <form action="/addItemToCart" method="post">
-                                    <select name="amount" id="" class="form-control form-control-sm cart-select">
-                                    @for(int i=1; @item.Quantity+1>i ;i++)
-                                    {
-                                        <option value="@i">@i</option>
-                                    }
-                                    </select>
-                                    <input type="hidden" id="ProductId" name="ProductId" value="@item.ProductId">
-                                    <input type="submit" class="btn btn-warning cart-button" style="font-size:0.8rem;" value="Add to &#128722;">
-                                </form> *@
-
-                            </div>
-                            <p class="card-text mt-3 p-1">
-                                @item.Description
-                            </p>
-                            
+                                <select name="amount" id="" class="form-control form-control-sm cart-select" disabled></select>
+                                <button type="button" class="btn btn-light cart-button" style="font-size:0.8rem;"><strike>Add to &#128722;</strike></button>
+                            }
                         </div>
+                        <p class="card-text mt-3 p-1">
+                            @item.Description
+                        </p>
+                        
                     </div>
-                }
-
+                </div>
             }
+
+        }
 
         }
 
@@ -82,6 +110,8 @@
     .card{
         display: inline-block;
         vertical-align: top;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        margin-bottom: 10px;
     }
     .cart-select{
         width: 4rem;

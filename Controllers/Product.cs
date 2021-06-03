@@ -27,6 +27,8 @@ namespace toolShop.Models
         [Range(0, 10000000000)]
         public int AmountSold{get;set;} = 0;
 
+        public bool isAvailable{get; set;} = true;
+
         public DateTime CreatedAt{get;set;} = DateTime.Now;
         public DateTime UpdatedAt{get;set;} = DateTime.Now;
 
